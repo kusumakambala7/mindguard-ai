@@ -125,27 +125,58 @@ function simulateDelay(): Promise<void> {
 }
 
 export async function analyzeImage(file: File): Promise<AnalysisResult> {
-  await simulateDelay();
-  
-  // Simulate random detection
-  const rand = Math.random();
-  const issues: DetectedIssue[] = [];
-  
-  if (rand > 0.7) {
-    issues.push({ ...IMAGE_DETECTIONS[0], location: "center of image" });
-    issues.push({ ...IMAGE_DETECTIONS[3] });
-  } else if (rand > 0.4) {
-    issues.push({ ...IMAGE_DETECTIONS[3], location: "lower portion" });
-  } else {
-    issues.push(IMAGE_DETECTIONS[4]);
+
+  const formData = new FormData();
+  formData.append("file", file);
+
+  const response = await fetch("http://127.0.0.1:5000/analyze-image", {
+    method: "POST",
+    body: formData
+  });
+
+  const data = await response.json();
+
+  // Convert backend risk level to score
+  let riskScore = 10;
+  let riskLevel: RiskLevel = "Safe";
+
+  if (data.risk_level === "High") {
+    riskScore = 85;
+    riskLevel = "High Risk";
+  }
+  else if (data.risk_level === "Medium") {
+    riskScore = 55;
+    riskLevel = "Medium Risk";
+  }
+  else {
+    riskScore = 10;
+    riskLevel = "Safe";
   }
 
-  const riskScore = issues[0].type === "safe" ? Math.floor(Math.random() * 15) + 5 : 
-    issues.some(i => i.severity === "critical") ? Math.floor(Math.random() * 25) + 75 :
-    Math.floor(Math.random() * 25) + 40;
-  
-  const riskLevel = getRiskLevel(riskScore);
-  const recommendations = issues.flatMap(i => RECOMMENDATIONS_MAP[i.type] || []);
+  const issues: DetectedIssue[] = [
+    {
+      type: "image_detection",
+      description: data.detected_issue,
+      severity:
+        data.risk_level === "High"
+          ? "critical"
+          : data.risk_level === "Medium"
+          ? "medium"
+          : "low"
+    }
+  ];
+
+  const recommendations: Recommendation[] = [
+    {
+      action: data.recommendation,
+      priority:
+        data.risk_level === "High"
+          ? "high"
+          : data.risk_level === "Medium"
+          ? "medium"
+          : "low"
+    }
+  ];
 
   return {
     contentType: "image",
@@ -155,33 +186,39 @@ export async function analyzeImage(file: File): Promise<AnalysisResult> {
     recommendations,
     report: generateReport("image", issues, riskScore, riskLevel, recommendations),
     analyzedAt: new Date(),
-    fileName: file.name,
+    fileName: file.name
   };
 }
 
 export async function analyzeVideo(file: File): Promise<AnalysisResult> {
-  await simulateDelay();
-  
-  const rand = Math.random();
-  const issues: DetectedIssue[] = [];
 
-  if (rand > 0.6) {
-    issues.push({ ...IMAGE_DETECTIONS[0], location: "Frame 12" });
-    issues.push({ type: "aggressive_speech", description: "Aggressive speech detected in audio track", severity: "high", location: "00:15-00:22" });
-  } else if (rand > 0.3) {
-    issues.push({ ...IMAGE_DETECTIONS[1], location: "Frame 34" });
-  } else {
-    issues.push({ ...IMAGE_DETECTIONS[4] });
-  }
+  const formData = new FormData();
+  formData.append("file", file);
 
-  const riskScore = issues[0].type === "safe" ? Math.floor(Math.random() * 15) + 5 :
-    issues.some(i => i.severity === "critical") ? Math.floor(Math.random() * 20) + 70 :
-    Math.floor(Math.random() * 25) + 35;
+  const response = await fetch("http://127.0.0.1:5000/analyze-video", {
+    method: "POST",
+    body: formData
+  });
 
+  const data = await response.json();
+
+  const riskScore = data.risk_score || 20;
   const riskLevel = getRiskLevel(riskScore);
-  const recommendations = issues.flatMap(i => RECOMMENDATIONS_MAP[i.type] || [
-    { action: "Review flagged frames and audio segments", priority: "medium" as const },
-  ]);
+
+  const issues: DetectedIssue[] = [
+    {
+      type: "video_analysis",
+      description: data.detected_issue,
+      severity: riskScore > 70 ? "critical" : riskScore > 40 ? "medium" : "low"
+    }
+  ];
+
+  const recommendations: Recommendation[] = [
+    {
+      action: data.recommendation,
+      priority: riskScore > 70 ? "high" : "medium"
+    }
+  ];
 
   return {
     contentType: "video",
@@ -191,30 +228,39 @@ export async function analyzeVideo(file: File): Promise<AnalysisResult> {
     recommendations,
     report: generateReport("video", issues, riskScore, riskLevel, recommendations),
     analyzedAt: new Date(),
-    fileName: file.name,
+    fileName: file.name
   };
 }
 
 export async function analyzeAudio(file: File): Promise<AnalysisResult> {
-  await simulateDelay();
-  
-  const rand = Math.random();
-  const issues: DetectedIssue[] = [];
 
-  if (rand > 0.65) {
-    issues.push({ ...TEXT_DETECTIONS[0], location: "00:05-00:12" });
-  } else if (rand > 0.35) {
-    issues.push({ ...TEXT_DETECTIONS[3], location: "00:20-00:25" });
-  } else {
-    issues.push(TEXT_DETECTIONS[4]);
-  }
+  const formData = new FormData();
+  formData.append("file", file);
 
-  const riskScore = issues[0].type === "safe" ? Math.floor(Math.random() * 15) + 5 :
-    issues.some(i => i.severity === "critical") ? Math.floor(Math.random() * 20) + 75 :
-    Math.floor(Math.random() * 25) + 30;
+  const response = await fetch("http://127.0.0.1:5000/analyze-audio", {
+    method: "POST",
+    body: formData
+  });
 
+  const data = await response.json();
+
+  const riskScore = data.risk_score || 20;
   const riskLevel = getRiskLevel(riskScore);
-  const recommendations = issues.flatMap(i => RECOMMENDATIONS_MAP[i.type] || []);
+
+  const issues: DetectedIssue[] = [
+    {
+      type: "audio_analysis",
+      description: data.detected_issue,
+      severity: riskScore > 70 ? "high" : "low"
+    }
+  ];
+
+  const recommendations: Recommendation[] = [
+    {
+      action: data.recommendation,
+      priority: riskScore > 70 ? "high" : "low"
+    }
+  ];
 
   return {
     contentType: "audio",
@@ -224,40 +270,39 @@ export async function analyzeAudio(file: File): Promise<AnalysisResult> {
     recommendations,
     report: generateReport("audio", issues, riskScore, riskLevel, recommendations),
     analyzedAt: new Date(),
-    fileName: file.name,
+    fileName: file.name
   };
 }
 
 export async function analyzeText(text: string): Promise<AnalysisResult> {
-  await simulateDelay();
 
-  const lower = text.toLowerCase();
-  const issues: DetectedIssue[] = [];
+  const response = await fetch("http://127.0.0.1:5000/analyze-text", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({ text })
+  });
 
-  const hateful = ["hate", "kill", "die", "attack", "destroy"];
-  const harassing = ["stupid", "ugly", "loser", "idiot", "dumb"];
-  const profane = ["damn", "hell", "crap"];
+  const data = await response.json();
 
-  if (hateful.some(w => lower.includes(w))) {
-    issues.push({ ...TEXT_DETECTIONS[2] });
-  }
-  if (harassing.some(w => lower.includes(w))) {
-    issues.push({ ...TEXT_DETECTIONS[1] });
-  }
-  if (profane.some(w => lower.includes(w))) {
-    issues.push({ ...TEXT_DETECTIONS[3] });
-  }
-  if (issues.length === 0) {
-    issues.push(TEXT_DETECTIONS[4]);
-  }
+  const riskScore = data.risk_level === "High" ? 85 : 20;
+  const riskLevel = data.risk_level === "High" ? "High Risk" : "Low Risk";
 
-  const riskScore = issues[0].type === "safe" ? Math.floor(Math.random() * 12) + 3 :
-    issues.some(i => i.severity === "critical") ? Math.floor(Math.random() * 20) + 78 :
-    issues.some(i => i.severity === "high") ? Math.floor(Math.random() * 20) + 50 :
-    Math.floor(Math.random() * 20) + 25;
+  const issues: DetectedIssue[] = [
+    {
+      type: "text_analysis",
+      description: data.detected_issue,
+      severity: data.risk_level === "High" ? "high" : "low"
+    }
+  ];
 
-  const riskLevel = getRiskLevel(riskScore);
-  const recommendations = issues.flatMap(i => RECOMMENDATIONS_MAP[i.type] || []);
+  const recommendations: Recommendation[] = [
+    {
+      action: data.recommendation,
+      priority: data.risk_level === "High" ? "high" : "low"
+    }
+  ];
 
   return {
     contentType: "text",
@@ -266,6 +311,6 @@ export async function analyzeText(text: string): Promise<AnalysisResult> {
     detectedIssues: issues,
     recommendations,
     report: generateReport("text", issues, riskScore, riskLevel, recommendations),
-    analyzedAt: new Date(),
+    analyzedAt: new Date()
   };
 }
