@@ -1,73 +1,127 @@
-# Welcome to your Lovable project
 
-## Project info
+# 🛡️ MindGuardAI – Multimodal Content Safety Analyzer
 
-**URL**: https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID
+MindGuardAI is an AI-powered content moderation system that analyzes **text, images, audio, and video** to detect harmful, violent, or unsafe content before publishing.
 
-## How can I edit this code?
+It helps creators and platforms ensure that their content follows community guidelines and platform safety policies.
 
-There are several ways of editing your application.
+---
 
-**Use Lovable**
+## 🚀 Features
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID) and start prompting.
+- 📝 **Text Analysis**
+  - Detects toxic language, threats, and harmful intent using AI models.
 
-Changes made via Lovable will be committed automatically to this repo.
+- 🎤 **Audio Analysis**
+  - Converts speech to text using Whisper
+  - Detects harmful or violent speech in audio.
 
-**Use your preferred IDE**
+- 🖼 **Image Analysis**
+  - Uses CLIP AI model to detect:
+    - Weapons
+    - Violence
+    - Blood
+    - Unsafe imagery.
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+- 🎥 **Video Analysis**
+  - Extracts frames from videos
+  - Detects harmful visual content
+  - Detects aggressive speech in audio track.
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+---
 
-Follow these steps:
+## 🧠 Technologies Used
 
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
-
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
-
-# Step 3: Install the necessary dependencies.
-npm i
-
-# Step 4: Start the development server with auto-reloading and an instant preview.
-npm run dev
-```
-
-**Edit a file directly in GitHub**
-
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
-
-**Use GitHub Codespaces**
-
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
-
-## What technologies are used for this project?
-
-This project is built with:
-
-- Vite
-- TypeScript
+Frontend:
 - React
-- shadcn-ui
+- TypeScript
 - Tailwind CSS
+- Vite
 
-## How can I deploy this project?
+Backend:
+- Python
+- Flask
+- Transformers (HuggingFace)
+- OpenAI Whisper
+- CLIP Model
+- PyTorch
+- MoviePy
 
-Simply open [Lovable](https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID) and click on Share -> Publish.
+---
 
-## Can I connect a custom domain to my Lovable project?
+## 🏗 System Architecture
+User Upload → Frontend (React) ↓ API Request ↓ Flask Backend ↓ AI Models
+Text → ToxicBERT
+Audio → Whisper + ToxicBERT
+Image → CLIP
+Video → Frame Extraction + CLIP + Speech Analysis
+↓ Risk Score + Recommendations ↓ Safety Report
 
-Yes, you can!
 
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
+---
 
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/features/custom-domain#custom-domain)
+## 📊 Output Example
+
+MindGuardAI generates:
+
+- Risk Score
+- Risk Level (Safe / Low / Medium / High)
+- Detected Issues
+- Recommendations
+- Full Safety Report
+
+Example:
+Content Type: Image Risk Score: 52% Risk Level: Medium Risk
+Detected Issue: Potential weapon detected
+Recommendation: Blur or remove the weapon before publishing
+
+
+## ⚙️ Installation
+
+### 1️⃣ Clone the repository
+git clone https://github.com/varshitha211/safe-creator.git⁠�
+
+### 2️⃣ Install frontend dependencies
+npm install
+
+### 3️⃣ Install backend dependencies
+cd backend pip install -r requirements.txt
+
+### 4️⃣ Run Backend
+python app.py
+
+Backend runs on:
+http://127.0.0.1:5000⁠�
+
+
+### 5️⃣ Run Frontend
+npm run dev
+
+Frontend runs on:
+http://localhost:5173⁠�
+
+
+---
+
+## 🎯 Use Cases
+
+- Social media moderation
+- Content creator safety checks
+- Video platform moderation
+- Online community protection
+- AI-assisted publishing approval
+
+---
+
+## 🔮 Future Improvements
+
+- Real-time livestream moderation
+- Automatic blur for unsafe objects
+- Platform policy violation detection
+- AI explanation for moderation decisions
+
+---
+
+## 👨‍💻 Author
+
+Krupa Varshitha
