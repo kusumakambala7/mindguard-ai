@@ -29,6 +29,23 @@ It helps creators and platforms ensure that their content follows community guid
   - Detects aggressive speech in audio track.
 
 ---
+## 📸 Project Screenshots
+
+### 🏠 Home Page
+![Home Page](<img width="1798" height="813" alt="Screenshot 2026-05-07 171716" src="https://github.com/user-attachments/assets/a86accea-11c1-45e8-b5bd-9fd928003275" />
+)
+
+### ⚙ Features & Architecture
+![Features](<img width="1865" height="897" alt="Screenshot 2026-05-07 171805" src="https://github.com/user-attachments/assets/28ff1ea3-5d8a-4784-a0d8-e038140e18f4" />
+)
+
+### 📊 Risk Analysis Report
+![Risk Analysis](<img width="1080" height="835" alt="risk" src="https://github.com/user-attachments/assets/dfa250b4-a1c0-4ea9-9777-d99ee1df0ffe" />
+)
+
+### 📂 Content Upload & Processing
+![Upload Analysis](<img width="1355" height="1161" alt="analyze" src="https://github.com/user-attachments/assets/e23d0090-750b-48e2-ad8a-ec99fba8d3d1" />
+)
 
 ## 🧠 Technologies Used
 
