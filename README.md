@@ -118,3 +118,4 @@ npm run dev
 ## 👨‍💻 Author
 
 Krupa Varshitha
+Updated by Kusuma Saisri
